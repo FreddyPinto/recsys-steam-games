@@ -1,74 +1,182 @@
-from fastapi import APIRouter, HTTPException, status
-from models import * 
-from data import df_endpoint1, df_endpoint2, df_endpoint3, df_endpoint4
+from models import Message
+from fastapi import APIRouter, Path
+from fastapi.responses import JSONResponse
+from database import *
 
 router = APIRouter()
 
-@router.get("/developer/{desarrollador}", response_description="Retorna cantidad de items y porcentaje de contenido Free por año según empresa desarrolladora.",response_model=DeveloperResponse)
-def get_developer(desarrollador: str):
-    df_dev = df_endpoint1[df_endpoint1['developer'] == desarrollador].reset_index()
-    df_dev['is_free'] = df_dev['price'] == 0
-    result = df_dev.groupby('release_year').agg({'item_id': 'count', 'is_free': 'mean'})
-    result.columns = ['Cantidad de Items', 'Contenido Free']
-    result['Contenido Free'] = (result['Contenido Free'] * 100).round(2).astype(str) + '%'
-    result = result.reset_index().rename(columns={'release_year': 'Año'})
-    records = result.reset_index().to_dict('records')
-    
-    return DeveloperResponse(records=records)
+
+@router.get("/PlayTimeGenre/{genre}", responses={
+    404: {"model": Message, "description": "The genre was not found"},
+    200: {
+        "description": "Year requested by genre",
+        "content": {
+            "application/json": {
+                "example": {
+                    "Year with the most hours played for Genre X”": 2013
+                }
+            }
+        },
+    },
+},
+)
+async def play_time_genre(genre: str = Path(...,
+                                            description="Enter a genre",
+                                            example='Simulation')):
+    """
+        Returns the year with the most hours played for a given genre.
+    """
+    response = await PlayTimeGenre(genre)
+    if response is None:
+        return JSONResponse(status_code=404, content={
+            "message": f"Genre {genre} not found. Please try again."})
+
+    return response
 
 
+@router.get("/UserForGenre/{genre}", responses={
+    404: {"model": Message, "description": "The genre was not found"},
+    200: {
+        "description": "User requested by genre",
+        "content": {
+            "application/json": {
+                "example": {
+                    "User with most hours played for Genre X": "us213ndjss09sdf",
+                    "Playtime": [
+                        {
+                            "Year": 2013,
+                            "Hours": 203
+                        },
+                        {
+                            "Year": 2012,
+                            "Hours": 100
+                        },
+                        {
+                            "Year": 2011,
+                            "Hours": 23
+                        }
+                    ]
+                }
+            }
+        },
+    },
+},
+)
+async def user_for_genre(genre: str = Path(
+        description="Enter a genre",
+        example='RPG')):
+    """
+        Returns the user who has accumulated the most played hours for the given genre and a list of accumulated playtime by release year.
+    """
+    response = await UserForGenre(genre)
 
-@router.get("/userdata/{User_id}",response_description="Retorna cantidad de dinero gastado por el usuario, el porcentaje de recomendación y cantidad de items.", response_model=UserdataResponse)
-def userdata(User_id: str):
-    df_user = df_endpoint2[df_endpoint2['user_id'] == User_id].reset_index()
-    dinero_gastado = df_user['total_spend'][0]
-    cantidad_items = df_user['items_count'][0]
-    porcentaje_recomendacion = (df_user[df_user['recommend'] == True]['recommend'].count()/cantidad_items * 100).round(2)
+    if response is None:
+        return JSONResponse(status_code=404, content={
+            "message": f"Genre {genre} not found. Please try again."})
 
-    result = UserdataResponse(
-        Usuario=User_id,
-        Dinero_gastado=dinero_gastado,
-        Porcentaje_de_recomendación=f"{porcentaje_recomendacion}%",
-        Cantidad_de_items=cantidad_items
-    )
-
-    return result
+    return response
 
 
-@router.get("/UserForGenre/{genero}", response_description="Retorna el usuario que acumula más horas jugadas para el género dado y una lista de la acumulación de horas jugadas por año de lanzamiento.")
-def UserForGenre(genero: str):
-    df_genre = df_endpoint3[genero].reset_index()
-    user_max_hours = df_genre.groupby('user_id')[genero].sum().idxmax()
-    hours_by_year = df_genre[df_genre['user_id'] == user_max_hours].groupby('release_year')[genero].sum().reset_index()
-    hours_by_year.columns = ['Año', 'Horas']
-    hours_by_year['Horas'] = hours_by_year['Horas'].astype(int)
+@router.get("/UsersRecommend/{year}", responses={
+    404: {"model": Message, "description": "The year was not found"},
+    200: {
+        "description": "Games requested by year",
+        "content": {
+            "application/json": {
+                "example": [{
+                    "Rank 1": "X",
+                },
+                    {
+                    "Rank 2": "Y",
+                },
+                    {
+                    "Rank 3": "Z",
+                },]
+            }
+        },
+    },
+},
+)
+async def users_recommend(year: int = Path(
+        description="Enter a year",
+        example=2013)):
+    """
+    Returns the top 3 games MOST recommended by users for the given year.
+    """
+    response = await UsersRecommend(year)
+    print(response)
+    if response is None:
+        return JSONResponse(status_code=404, content={
+            "message": f"The year {year} has not reviews to calculate the ranking of the most recommended games. Please try another year."})
+    return response
 
-    result = {
-        f"Usuario con más horas jugadas para Género {genero} " : user_max_hours,
-        "Horas jugadas": hours_by_year.to_dict('records')
-    }
 
-    return result
+@router.get("/UsersWorstDeveloper/{year}", responses={
+    404: {"model": Message, "description": "The year was not found"},
+    200: {
+        "description": "Developers requested by year",
+        "content": {
+            "application/json": {
+                "example": [{
+                    "Rank 1": "X",
+                },
+                    {
+                    "Rank 2": "Y",
+                },
+                    {
+                    "Rank 3": "Z",
+                },]
+            }
+        },
+    },
+},)
+async def users_worst_developer(year: int = Path(
+        description="Enter a year",
+        example=2011)):
+    """
+    Returns the top 3 developers with the LEAST recommended games by users for the given year.
+    """
+    response = await UsersWorstDeveloper(year)
+    if response is None:
 
-@router.get("/best_developer_year/{año}", response_description="Retorna el top 3 de desarrolladores con juegos MÁS recomendados por usuarios para el año dado.")
-def best_developer_year(year: int):
-    df_year = df_endpoint4[(df_endpoint4['posted_year'] == str(year)) & (df_endpoint4['recommend'] == True) & (df_endpoint4['sentiment_analysis'] == 2)]
-    top_developers = df_year['developer'].value_counts().nlargest(3).index.tolist()
+        return JSONResponse(status_code=404, content={
+            "message": f"The year {year} has no reviews to calculate the developers' ranking with least recommended games. Please try another year."})
+    return response
 
-    result = [{"Puesto 1" : top_developers[0]},
-              {"Puesto 2" : top_developers[1]},
-              {"Puesto 3" : top_developers[2]}]
 
-    return result
+@router.get("/SentimentAnalysis/{developer}", responses={
+    404: {"model": Message, "description": "The developer was not found"},
+    200: {
+        "description": "Sentiment analysis requested by developer",
+        "content": {
+            "application/json": {
+                "example": {
+                    "Valve": [
+                        {
+                            "Negative": 1352
+                        },
+                        {
+                            "Neutral": 2202
+                        },
+                        {
+                            "Positive": 4840
+                        }
+                    ]
+                }
+            }
+        },
+    },
+},)
+async def sentiment_analysis(developer: str = Path(
+        description="Enter developer's name",
+        example="Ubisoft")):
+    """
+    Returns a developer with the total number of users reviews records categorized with a sentiment analysis.
+    """
 
-@router.get("/developer_reviews_analysis/{desarrollador}",response_description="Según el desarrollador, se retorna un diccionario con el nombre del desarrollador como llave y una lista con la cantidad total de registros de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento como valor positivo o negativo.", response_model=DeveloperReviewsAnalysisResponse)
-def developer_reviews_analysis(desarrollador: str):
-    df_dev = df_endpoint4[df_endpoint4['developer'] == desarrollador]
-    sentiment_counts = df_dev['sentiment_analysis'].value_counts()
-    negative_reviews = sentiment_counts.get(0, 0)
-    positive_reviews = sentiment_counts.get(1, 0) + sentiment_counts.get(2, 0)
+    response = await get_sentiment_by_developer(developer)
+    if response is None:
 
-    reviews = ReviewAnalysis(Negativos=negative_reviews, Positivos=positive_reviews)
-    result = DeveloperReviewsAnalysisResponse(Desarrollador=desarrollador, Reviews=reviews)
-
-    return result
+        return JSONResponse(status_code=404, content={
+            "message": f"Developer {developer} not found"})
+    return response
