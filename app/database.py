@@ -55,7 +55,7 @@ async def UserForGenre(genre: str):
         'user_id')['playtime_forever'].sum().idxmax()
 
     playtime_by_year = playtime_by_user_year[playtime_by_user_year['user_id'] == max_playtime_user][['release_year', 'playtime_forever']].rename(
-        columns={'release_year': 'Año', 'playtime_forever': 'Horas'}).map(round).to_dict('records')
+        columns={'release_year': 'Año', 'playtime_forever': 'Horas'}).applymap(round).to_dict('records')
 
     response = {f"Usuario con más horas jugadas para el género {genre.capitalize()}": max_playtime_user,
                 "Horas jugadas": playtime_by_year}
