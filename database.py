@@ -5,7 +5,7 @@ import os
 
 def load_data():
     data_dir = os.path.join(os.path.dirname(__file__),
-                            '..', 'data', 'processed')
+                            'data', 'processed')
 
     df_pseudo_db1 = pd.read_parquet(
         os.path.join(data_dir, 'pseudo-db1.parquet'))
