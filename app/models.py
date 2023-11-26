@@ -10,3 +10,6 @@ class SentimentCount(BaseModel):
 
 class SentimentAnalysis(BaseModel):
     Dict[str, SentimentCount]
+
+class Message(BaseModel):
+    message: str
