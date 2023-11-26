@@ -1,4 +1,4 @@
-# from models import *
+# from models import Message
 import pandas as pd
 import os
 
@@ -20,45 +20,46 @@ df_pseudo_db1, df_pseudo_db2 = load_data()
 
 async def PlayTimeGenre(genre: str):
 
-    genre_lower = genre.lower()
+    if genre.upper() == "RPG":
+        genre = genre.upper()
+    else:
+        genre = genre.title()
 
-    df_genre = df_pseudo_db1[df_pseudo_db1['genres'].str.lower(
-    ).str.contains(genre_lower)]
-
-    if df_genre.empty:
+    if genre not in df_pseudo_db1.columns:
         return None
 
-    playtime_by_year = df_genre.groupby(
-        'release_year')['playtime_forever'].sum()
+    df_genre = df_pseudo_db1[genre].reset_index()
 
-    max_playtime_year = int(playtime_by_year.idxmax())
+    playtime_by_year = df_genre.groupby('release_year')[genre].sum()
+
+    max_playtime_year = (playtime_by_year.idxmax())
     response = {
-        f"Año de lanzamiento con más horas jugadas para el género {genre.capitalize()}": max_playtime_year}
+        f"Year with the most hours played for Genre {genre}": int(max_playtime_year)}
 
     return response
 
 
 async def UserForGenre(genre: str):
+    if genre.upper() == "RPG":
+        genre = genre.upper()
+    else:
+        genre = genre.title()
 
-    genre_lower = genre.lower()
-
-    df_genre = df_pseudo_db1[df_pseudo_db1['genres'].str.lower(
-    ).str.contains(genre_lower)]
-
-    if df_genre.empty:
+    if genre not in df_pseudo_db1.columns:
         return None
 
-    playtime_by_user_year = df_genre.groupby(['user_id', 'release_year'])[
-        'playtime_forever'].sum().reset_index()
+    df_genre = df_pseudo_db1[genre].reset_index()
+    user_max_hours = df_genre.groupby('user_id')[genre].sum().idxmax()
+    playtime_by_year = df_genre[df_genre['user_id'] == user_max_hours].groupby(
+        'release_year')[genre].sum().reset_index()
+    playtime_by_year.columns = ['Year', 'Hours']
+    playtime_by_year = playtime_by_year[playtime_by_year['Hours'] > 0]
+    playtime_by_year['Hours'] = playtime_by_year['Hours'].round().astype(int)
 
-    max_playtime_user = playtime_by_user_year.groupby(
-        'user_id')['playtime_forever'].sum().idxmax()
-
-    playtime_by_year = playtime_by_user_year[playtime_by_user_year['user_id'] == max_playtime_user][['release_year', 'playtime_forever']].rename(
-        columns={'release_year': 'Año', 'playtime_forever': 'Horas'}).applymap(round).to_dict('records')
-
-    response = {f"Usuario con más horas jugadas para el género {genre.capitalize()}": max_playtime_user,
-                "Horas jugadas": playtime_by_year}
+    response = {
+        f"User with most hours played for Genre {genre} ": user_max_hours,
+        "Playtime": playtime_by_year.to_dict('records')
+    }
 
     return response
 
@@ -75,7 +76,7 @@ async def UsersRecommend(year: int):
 
     top_games = recommendations.sort_values(ascending=False).head(3)
 
-    response = [{"Puesto {}".format(i+1): game}
+    response = [{"Rank {}".format(i+1): game}
                 for i, game in enumerate(top_games.index)]
 
     return response
@@ -96,7 +97,7 @@ async def UsersWorstDeveloper(year: int):
 
     top_games = not_recommendations.sort_values(ascending=False).head(3)
 
-    response = [{"Puesto {}".format(i+1): game}
+    response = [{"Rank {}".format(i+1): game}
                 for i, game in enumerate(top_games.index)]
 
     return response
