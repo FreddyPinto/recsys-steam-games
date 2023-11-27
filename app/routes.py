@@ -178,5 +178,5 @@ async def sentiment_analysis(developer: str = Path(
     if response is None:
 
         return JSONResponse(status_code=404, content={
-            "message": f"Developer {developer} not found"})
+            "message": f"Developer {developer} not found. Please try again."})
     return response
