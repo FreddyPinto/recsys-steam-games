@@ -1,4 +1,3 @@
-# from models import Message
 import pandas as pd
 import os
 
@@ -11,11 +10,14 @@ def load_data():
         os.path.join(data_dir, 'pseudo-db1.parquet'))
     df_pseudo_db2 = pd.read_parquet(
         os.path.join(data_dir, 'pseudo-db2.parquet'))
+    df_item_sim = pd.read_parquet(
+        os.path.join(data_dir, 'items_sim.parquet'))
+    
 
-    return df_pseudo_db1, df_pseudo_db2
+    return df_pseudo_db1, df_pseudo_db2, df_item_sim
 
 
-df_pseudo_db1, df_pseudo_db2 = load_data()
+df_pseudo_db1, df_pseudo_db2, df_item_sim = load_data()
 
 
 async def PlayTimeGenre(genre: str):
@@ -128,3 +130,22 @@ async def get_sentiment_by_developer(developer: str):
     }
 
     return response
+
+
+async def get_game_recommender(item_name: str):
+
+    if item_name not in df_item_sim.index:
+        return None
+
+    row = df_item_sim.loc[item_name]
+
+    row_sorted = row.sort_values(ascending=False)
+
+    similar_games = row_sorted.index[1:6]
+
+    recommendations = {}
+
+    for i, juego in enumerate(similar_games, start=1):
+        recommendations[i] = juego
+
+    return recommendations
