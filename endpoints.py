@@ -1,7 +1,7 @@
 from models import Message
 from fastapi import APIRouter, Path
 from fastapi.responses import JSONResponse
-from database import *
+from database import PlayTimeGenre, UserForGenre, UsersRecommend, UsersWorstDeveloper, get_sentiment_by_developer
 
 router = APIRouter()
 
@@ -178,5 +178,5 @@ async def sentiment_analysis(developer: str = Path(
     if response is None:
 
         return JSONResponse(status_code=404, content={
-            "message": f"Developer {developer} not found"})
+            "message": f"Developer {developer} not found. Please try again."})
     return response
