@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from jinja2 import Template
-from routes import router
+from endpoints import router
+from recommender import recommender  
 from fastapi.responses import HTMLResponse
 
 
@@ -19,3 +20,5 @@ def index():
   return template.render()
 
 app.include_router(router, tags=["Endpoints"])
+
+app.include_router(recommender, tags=["Recommender"])
