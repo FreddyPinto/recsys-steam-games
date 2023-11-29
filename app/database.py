@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 
 
@@ -12,12 +13,13 @@ def load_data():
         os.path.join(data_dir, 'pseudo-db2.parquet'))
     df_item_sim = pd.read_parquet(
         os.path.join(data_dir, 'items_sim.parquet'))
-    
+    df_matrix = pd.read_parquet(
+        os.path.join(data_dir, 'matrix.parquet'))
 
-    return df_pseudo_db1, df_pseudo_db2, df_item_sim
+    return df_pseudo_db1, df_pseudo_db2, df_item_sim, df_matrix
 
 
-df_pseudo_db1, df_pseudo_db2, df_item_sim = load_data()
+df_pseudo_db1, df_pseudo_db2, df_item_sim, df_matrix = load_data()
 
 
 async def PlayTimeGenre(genre: str):
@@ -149,3 +151,47 @@ async def get_game_recommender(item_name: str):
         recommendations[i] = juego
 
     return recommendations
+
+
+async def get_user_recommendation(user_id: str):
+    np.seterr(divide='ignore', invalid='ignore')
+
+    if user_id in df_matrix.index:
+
+        fila_usuario = df_matrix.loc[user_id]
+
+        juegos_no_jugados = []
+
+        for juego, rating in fila_usuario.items():
+
+            if rating == 0:
+
+                juegos_no_jugados.append(juego)
+
+        predicciones = []
+
+        for juego in juegos_no_jugados:
+
+            columna_juego = df_item_sim.loc[juego]
+
+            producto = np.dot(fila_usuario, columna_juego)
+
+            suma_sim = np.sum(columna_juego[fila_usuario != 0])
+
+            prediccion = producto / suma_sim
+
+            predicciones.append((juego, prediccion))
+
+        predicciones_ordenadas = sorted(
+            predicciones, key=lambda x: x[1], reverse=True)
+        diccionario = {}
+
+        for i, tupla in enumerate(predicciones_ordenadas[:5], start=1):
+
+            diccionario[i] = (tupla[0])
+
+        return diccionario
+
+    else:
+
+        return None
