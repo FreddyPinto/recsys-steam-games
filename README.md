@@ -174,6 +174,10 @@ Los endpoints disponibles son los siguientes:
 + def **sentiment_analysis( *`developer` : str* )**:
     Según la empresa desarrolladora, se devuelve un diccionario con el nombre de la desarrolladora como llave y una lista con la cantidad total de registros de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento como valor. 
 
+<p align="center">
+  <img src="images/screenshot-recsys.png" alt="screenshot"/>
+</p>
+
 + def **recomendacion_juego( *`item_name`: str* )**:
     Ingresando nombre de un juego, retorna una lista con 5 juegos recomendados similares al ingresado.
 
