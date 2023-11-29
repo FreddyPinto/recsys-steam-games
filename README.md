@@ -13,22 +13,22 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/FreddyPinto/crud-cli-app-python-mongodb">
-    <img src="images\live-import.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/FreddyPinto/recsys-steam-games">
+    <img src="images/favicon-steam.png" alt="Logo" width="80" height="80">
     
   </a>
 
-<h3 align="center">CRUD CLI app con MongoDB y Python</h3>
+<h3 align="center">RecSys API  for Steam Games</h3>
 
   <p align="center">
-    Aplicación CRUD simple de interfaz de línea de comandos para la gestión de usuarios utilizando Python y MongoDB Atlas.
+    API REST que permite acceder a datos de Steam y obtener recomendaciones de juegos personalizadas basadas en un modelo de aprendizaje automático.
     <br />
-    <a href="https://github.com/FreddyPinto/crud-cli-app-python-mongodb"><strong>Explorar docs »</strong></a>
+    <a href="https://github.com/FreddyPinto/recsys-steam-games"><strong>Explorar docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/FreddyPinto/crud-cli-app-python-mongodb/issues">Reportar Bug</a>
+    <a href="https://github.com/FreddyPinto/recsys-steam-games/issues">Reportar Bug</a>
     ·
-    <a href="https://github.com/FreddyPinto/crud-cli-app-python-mongodb/issues">Request Feature</a>
+    <a href="https://github.com/FreddyPinto/recsys-steam-games/issues">Request Feature</a>
   </p>
 </div>
 
@@ -66,19 +66,27 @@
 ## Acerca del Proyecto
 
 <p align="center">
-  <img src="images\screenshot.jpg" alt="screenshot"/>
+  <img src="images/screenshot-api-home.png" alt="screenshot"/>
 </p>
 
-Este proyecto consiste en crear una aplicación CRUD simple de interfaz de línea de comandos utilizando Python y MongoDB Atlas para el programa Talento Cloud Pro de NEXA y AWS.
+Este proyecto es el resultado de un desafío propuesto en la etapa de Labs del bootcamp de data science de SoyHenry, que consistía en crear una API REST utilizando Python y FastAPI. El proyecto abarca todo el ciclo de vida de un proyecto de Machine Learning, desde la recolección y el tratamiento de los datos hasta el entrenamiento y el despliegue en produccción del modelo de ML.
 
-El objetivo de este proyecto es poner en práctica todo lo aprendido sobre cómo crear un cluster y una base de datos en MongoDB Atlas, cómo crear una conexión, cómo crear, consultar, actualizar y eliminar un usuario (CRUD), cómo trabajar con documentos anidados, funciones y triggers.
+El resultado es un [API REST](https://recsys-steam-api.onrender.com/) que permite acceder a datos de Steam y obtener recomendaciones de juegos personalizadas basadas en un modelo de aprendizaje automático. Mediante la API, se puede consultar información sobre géneros de juegos, usuarios, desarrolladores y reseñas, así como obtener sugerencias de juegos similares o adecuados para los usuarios.
 
-El resultado es una pequeña aplicación en Python que permite gestionar usuarios, con las siguientes funcionalidades:
+El proyecto se basa en el uso de MLOps, una metodología que combina las prácticas de DevOps con las de Machine Learning, para facilitar el desarrollo, la implementación y el monitoreo de los modelos de ML en entornos productivos.
 
-* Crear un usuario
-* Consultar un usuario
-* Eliminar un usuario
-* Actualizar un usuario
+El proyecto se dividió en las siguientes etapas:
+
+- **Transformaciones:** Se realizó un [preprocesamiento]( https://github.com/FreddyPinto/recsys-steam-games/tree/main/notebooks) de los datos para obtener el formato adecuado para el análisis y el modelado. Se eliminanron las columnas innecesarias que no se necesitaban para las consultas o preparar los modelos de aprendizaje automático, y de esa manera optimizar el rendimiento de la API y el entrenamiento del modelo.
+
+- **Feature Engineering:** Se aplicó [ingeniería de características](https://github.com/FreddyPinto/recsys-steam-games/blob/main/notebooks/3-feature-engineering.ipynb) para extraer información relevante de los datos y crear nuevas variables que ayudaran a mejorar el rendimiento del modelo de ML. Se creó una nueva columna de análisis de sentimiento con NLP para las reseñas de los usuarios. Se utilizó la técnica de one-hot encoding para codificar las variables categóricas y se aplica una normalización a las variables numéricas.
+
+- **Desarrollo API:** Se creo una [API REST](https://github.com/FreddyPinto/recsys-steam-games/blob/main/app) con el framework FastAPI para disponibilizar los datos de la empresa y permitir realizar consultas sobre los mismos. La API cuenta con varios endpoints que devuelven información sobre los géneros, los desarrolladores, los juegos y las recomendaciones de los usuarios.
+
+- **Modelado:** Se utilizó la librería Scikit-learn para entrenar y evaluar los modelos de [ML](https://github.com/FreddyPinto/recsys-steam-games/blob/main/notebooks/3-feature-engineering.ipynb) para el sistema de recomendación. Se desarrollaron dos tipos de modelos de recomendacion basados en filtro colaborativo de tipo item-item y user-item empleando la similitud del coseno.
+
+- **Despliegue:** Se utilizó el cloud application hosting service de Render para el [deploy](https://recsys-steam-api.onrender.com/) de la API en un servidor en la nube y hacerla accesible a través de una URL pública.
+
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
@@ -87,9 +95,9 @@ El resultado es una pequeña aplicación en Python que permite gestionar usuario
 ### Desarrollado con:
 
 * [![Python][Python]][Python-url]
-* [![MongoDB][MongoDB]][MongoDB-url]
-* [![VSCode][VSCode]][VSC-url]
-
+* [![Scikitlearn][Scikitlearn]][Scikitlearn-url]
+* [![FastAPI][FastAPI]][FastAPI-url]
+* [![Render][Render]][Render-url]
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
@@ -98,32 +106,17 @@ El resultado es una pequeña aplicación en Python que permite gestionar usuario
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Para ejecutar este proyecto localmente, necesitas tener instalado Python 3.9 o superior, así como una cuenta en MongoDB Atlas. Sigue estos pasos para configurar el proyecto:
-
-### Prerrequisitos
-
-* Instala Python 3.9 o superior en tu sistema operativo. Puedes descargarlo desde https://www.python.org/downloads/
-
-* Crea una cuenta en MongoDB Atlas siguiendo las instrucciones de https://www.mongodb.com/cloud/atlas/register
-
-* Crea un cluster gratuito en MongoDB Atlas siguiendo las instrucciones de https://docs.atlas.mongodb.com/tutorial/create-new-cluster/
-
-* Crea una base de datos llamada “anycompany” y una colección llamada “users” en tu cluster siguiendo las instrucciones de https://docs.atlas.mongodb.com/data-explorer/manage-data/
-
-* Crea un usuario con permisos de lectura y escritura para tu base de datos siguiendo las instrucciones de https://docs.atlas.mongodb.com/security-add-mongodb-users/
-
-* Obtén la cadena de conexión a tu cluster siguiendo las instrucciones de https://docs.atlas.mongodb.com/connect-to-cluster/#connect-to-a-cluster
-
+Para ejecutar este proyecto localmente sigue estos pasos para configurarlo:
 
 ### Instalación
 
 1. Clona el repositorio:
    ```sh
-   git clone https://github.com/FreddyPinto/crud-cli-app-python-mongodb.git
+   git clone https://github.com/FreddyPinto/recsys-steam-games.git
    ```
 2. Crea un entorno virtual de Python:
     ```sh
-    python -m venv env
+    python -m venv venv
     ```
 3. Activa el entorno virtual: 
     - En Windows:
@@ -138,13 +131,13 @@ Para ejecutar este proyecto localmente, necesitas tener instalado Python 3.9 o s
    ```sh
    pip install -r requirements.txt
    ```
-5. Configura las variables de entorno:
-    * Abre el archivo [config.py](./project/config.py)
-    * Reemplaza la variable `url` con la cadena de conexión a tu cluster.
-    * Asigna tu passsword a la varibale de entorno `MONGODB_PASSWORD`
+5. Cambia al directorio :
+    ```sh
+    cd app
+    ```
 6. Ejecuta la aplicación:
     ```sh
-    python main.py
+    uvicorn main:app --reload
     ```
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
@@ -153,24 +146,39 @@ Para ejecutar este proyecto localmente, necesitas tener instalado Python 3.9 o s
 <!-- USAGE EXAMPLES -->
 ## Uso
 
-La aplicación te mostrará un menú con las siguientes opciones:
+Para acceder a la documentación de la API, ingresa a la siguiente URL en tu navegador:
+```
+http://localhost:8000/docs
+```
 
-    A) Crear usuario
-    B) Consultar usuario
-    C) Eliminar usuario
-    D) Actualizar usuario
+Allí podrás ver los diferentes endpoints que ofrece la API, así como los parámetros y los ejemplos de respuesta. También podrás probar la API directamente desde el navegador, haciendo clic en el botón **Try it out** y luego en el botón **Execute**.
 
-Para seleccionar una opción, ingresa la letra correspondiente y presiona Enter.
+<p align="center">
+  <img src="images/screenshot-api-doc.png" alt="screenshot"/>
+</p>
 
-- Si seleccionas la **opción A**, la aplicación te pedirá que ingreses los datos del usuario que quieres crear: nombre, edad, email y dirección (*opcional*). Luego, la aplicación insertará el usuario en la colección “users” de tu base de datos.
+Los endpoints disponibles son los siguientes:
 
-- Si seleccionas la **opción B**, la aplicación te pedirá que ingreses el nombre del usuario que quieres buscar te mostrará sus datos.
++ def **PlayTimeGenre( *`genre` : str* )**:
+    Retorna el `año` con mas horas jugadas para dicho género.
 
-- Si seleccionas la **opción C**, la aplicación te pedirá que ingreses el nombre del usuario y lo eliminará de la base de datos.
++ def **UserForGenre( *`genre` : str* )**:
+    Retorna el usuario que acumula más horas jugadas para el género dado y una lista de la acumulación de horas jugadas por año.
 
-- Si seleccionas la **opción D**, la aplicación te pedirá que ingreses el nombre del usuario que quieres modificar. Luego, te pedirá que ingreses los nuevos datos: nombre, edad, email y dirección. Finalmente, la aplicación actualizará el usuario en la base de datos.
++ def **UsersRecommend( *`year` : int* )**:
+   Retorna el top 3 de juegos MÁS recomendados por usuarios para el año dado.
 
-Escribe **"q"** o **"quit"** para terminar la ejecución de la aplicación.
++ def **UsersWorstDeveloper( *`year` : int* )**:
+   Retorna el top 3 de desarrolladoras con juegos MENOS recomendados por usuarios para el año dado.
+
++ def **sentiment_analysis( *`developer` : str* )**:
+    Según la empresa desarrolladora, se devuelve un diccionario con el nombre de la desarrolladora como llave y una lista con la cantidad total de registros de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento como valor. 
+
++ def **recomendacion_juego( *`item_name`: str* )**:
+    Ingresando nombre de un juego, retorna una lista con 5 juegos recomendados similares al ingresado.
+
++ def **recomendacion_usuario( *`user_id`: str* )**:
+    Ingresando el id de un usuario, retorna una lista con 5 juegos recomendados para dicho usuario.
 
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
@@ -179,16 +187,24 @@ Escribe **"q"** o **"quit"** para terminar la ejecución de la aplicación.
 
 <!-- ROADMAP -->
 ## Roadmap
-Estas son algunas de las mejoras que se podrían implementar en el futuro:
 
-- [ ] Añadir validaciones de entrada para evitar errores
-- [ ] Añadir una interfaz gráfica de usuario (GUI) para mejorar la experiencia de usuario
-- [ ] Añadir más opciones de búsqueda y filtrado
-- [ ] Añadir más opciones de reporte y gráficos
-- [ ] Añadir una funcionalidad para exportar e importar los datos de los usuarios
+Este proyecto se realizó como un Producto Mínimo Viable, por lo que se podrían mejorar algunos aspectos en el futuro, con la finalidad de lograr un producto más completo y robusto. Algunas de las posibles mejoras son:
 
+- [ ] Mejorar el análisis de sentimiento de las reseñas, probando con distintos umbrales de clasificación.
 
-Consulta los [issues abiertos](https://github.com/FreddyPinto/crud-cli-app-python-mongodb/issues) para proponer características (y problemas conocidos).
+- [ ] Usar una base de datos NoSQL como MongoDB para almacenar los datos de los juegos y los usuarios.
+
+- [ ] Mejorar el análisis exploratorio de datos.
+
+- [ ] Dockerizar el proyecto para facilitar el despliegue y la portabilidad de la aplicación.
+
+- [ ] Explorar otras técnicas o librerías para mejorar el análisis de sentimiento y los modelos de recomendación.
+
+- [ ] Considerar el despliegue de la API en servicios gratuitos que no menostengan limitaciones en su capacidad de almacenamiento.
+
+- [ ] Mejorar el mantenimiento del modelo de ML, estableciendo un pipeline que permita reentrenar el modelo según llegan nuevos datos y evaluar su rendimiento de forma continua.
+
+Consulta los [issues abiertos](https://github.com/FreddyPinto/recsys-steam-games/issues) para proponer características (y problemas conocidos).
 
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
@@ -227,7 +243,7 @@ Freddy Pinto - freddypinto@outlook.com
 
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-Project Link: [https://github.com/FreddyPinto/crud-cli-app-python-mongodb](https://github.com/FreddyPinto/crud-cli-app-python-mongodb)
+Project Link: [https://github.com/FreddyPinto/recsys-steam-games](https://github.com/FreddyPinto/recsys-steam-games)
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
@@ -237,8 +253,8 @@ Project Link: [https://github.com/FreddyPinto/crud-cli-app-python-mongodb](https
 ## Agradecimientos
 Quiero agradecer a las siguientes personas y recursos que me han ayudado a realizar este proyecto:
 
-* [NEXA](https://www.nexaresources.com/) y [AWS](https://aws.amazon.com/) por ofrecer el programa Talento Cloud Pro.
-* [UBITS](https://www.ubits.com/) y [Código Facilito](https://codigofacilito.com/) por impartir el módulo de NoSQL con MongoDB y Python.
+* A [SoyHenry](https://www.soyhenry.com/) por ofrecerme esta gran oportunidad de participar en el bootcamp de data science y aprender sobre MLOps.
+* A la comunidad de Henry, especialmente a los profesores y compañeros que me han apoyado y guiado durante el proceso de aprendizaje.
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
@@ -246,23 +262,24 @@ Quiero agradecer a las siguientes personas y recursos que me han ayudado a reali
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/FreddyPinto/crud-cli-app-python-mongodb.svg?style=for-the-badge
-[contributors-url]: https://github.com/FreddyPinto/crud-cli-app-python-mongodb/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/FreddyPinto/crud-cli-app-python-mongodb.svg?style=for-the-badge
-[forks-url]: https://github.com/FreddyPinto/crud-cli-app-python-mongodb/network/members
-[stars-shield]: https://img.shields.io/github/stars/FreddyPinto/crud-cli-app-python-mongodb.svg?style=for-the-badge
-[stars-url]: https://github.com/FreddyPinto/crud-cli-app-python-mongodb/stargazers
-[issues-shield]: https://img.shields.io/github/issues/FreddyPinto/crud-cli-app-python-mongodb.svg?style=for-the-badge
-[issues-url]: https://github.com/FreddyPinto/crud-cli-app-python-mongodb/issues
-[Licencia-shield]: https://img.shields.io/github/license/FreddyPinto/crud-cli-app-python-mongodb.svg?style=for-the-badge
-[Licencia-url]: https://github.com/FreddyPinto/crud-cli-app-python-mongodb/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/FreddyPinto/recsys-steam-games.svg?style=for-the-badge
+[contributors-url]: https://github.com/FreddyPinto/recsys-steam-games/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/FreddyPinto/recsys-steam-games.svg?style=for-the-badge
+[forks-url]: https://github.com/FreddyPinto/recsys-steam-games/network/members
+[stars-shield]: https://img.shields.io/github/stars/FreddyPinto/recsys-steam-games.svg?style=for-the-badge
+[stars-url]: https://github.com/FreddyPinto/recsys-steam-games/stargazers
+[issues-shield]: https://img.shields.io/github/issues/FreddyPinto/recsys-steam-games.svg?style=for-the-badge
+[issues-url]: https://github.com/FreddyPinto/recsys-steam-games/issues
+[Licencia-shield]: https://img.shields.io/github/license/FreddyPinto/recsys-steam-games.svg?style=for-the-badge
+[Licencia-url]: https://github.com/FreddyPinto/recsys-steam-games/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/FreddyPinto-/
 [product-screenshot]: images/screenshot.jpg
-[Python]: https://img.shields.io/badge/Python-306998?logo=python&labelColor=white
+[Python]: https://img.shields.io/badge/Python-333333?style=flat&logo=python&labelColor=white
 [Python-url]: https://www.python.org/
-[MongoDB]: https://img.shields.io/badge/MongoDB-mongodb?logo=mongodb&labelColor=white
-[MongoDB-url]: https://www.mongodb.com/atlas
-[VSCode]: https://img.shields.io/badge/VSCode-blue?logo=VisualStudioCode&logoColor=blue&labelColor=white
-[VSC-url]: https://code.visualstudio.com/
- 
+[FastAPI]: https://img.shields.io/badge/-FastAPI-333333?style=flat&logo=fastapi&labelColor=white
+[FastAPI-url]: https://fastapi.tiangolo.com/
+[Render]: https://img.shields.io/badge/-Render-333333?style=flat&logo=render&labelColor=white
+[Render-url]: https://render.com/
+[Scikitlearn]:https://img.shields.io/badge/-Scikitlearn-333333?style=flat&logo=scikitlearn&labelColor=white
+[Scikitlearn-url]:https://scikit-learn.org/stable/index.html
